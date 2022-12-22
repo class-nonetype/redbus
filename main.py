@@ -5,8 +5,9 @@ import json
 import platform
 
 
-async def write_json_file():
-    url = 'https://api.xor.cl/red/bus-stop/PI528'
+async def write_json_file(id):
+
+    url = 'https://api.xor.cl/red/bus-stop/' + id
 
     request = requests.get(
         url,
@@ -28,7 +29,7 @@ async def write_json_file():
 async def read_json_file():
     with open('./json/data.json', 'r') as json_file:
         content = json_file.read()
-        #_ = json.dumps(_)
+        # json.dumps(_)
         data = json.loads(content)
 
         class Bus:
@@ -141,40 +142,24 @@ async def read_json_file():
 
 
         buses_id = [i for i in range(0,12)]
-        
+
         for index in buses_id:
             print(
                 BusStation(index)
             )
 
 
-        '''try:
-            os.mkdir('./stats')
-        except FileExistsError:
-            pass
-
-        try:
-        
-            with open('./stats/info.txt', '+w') as info_file:
-                for index in buses_id:
-                    info_file.write(str(BusStation(index)))
-            
-            with open('./stats/info.txt', 'r') as info_file:
-                print(info_file.read())
-        except:
-            pass'''
-
-
-
 
 async def main():
-
 
     if not os.path.exists('./json'):
         os.mkdir('./json')
 
+
+    id = input('ID del paradero (ejemplo: PI540)\t')
+
     while True:
-        await write_json_file()
+        await write_json_file(id)
         await read_json_file()
 
 
