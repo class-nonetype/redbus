@@ -153,14 +153,8 @@ class BusStation:
         self.name                = data['name']
         self.status_code         = data['status_code']
         self.status_description  = data['status_description']
-        self.services            = data['services'][index]
-
-            
-    def service(self) -> str:
-                
-        for available_services in self.services:
-            for services in self.services[available_services]:
-                return Service(self.services).AvailableService.__str__()
+        
+        self.services           = data['services'][index]
 
 
     def __str__(self) -> str:
@@ -174,7 +168,12 @@ class BusStation:
         
         return class_data
 
-
+            
+    def service(self) -> str:
+                
+        for available_services in self.services:
+            for services in self.services[available_services]:
+                return Service(self.services).AvailableService.__str__()
 
 
 def write_json_file(id : str):
@@ -182,7 +181,7 @@ def write_json_file(id : str):
     api_url = 'https://api.xor.cl/red/bus-stop/' + id
 
     request = requests.get(
-        api_url,
+        url     = api_url,
         headers =\
             {
                 "User-Agent" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
@@ -214,7 +213,6 @@ def write_json_file(id : str):
 def read_json_file():
     
     if os.path.exists(env.attr['json_file']):
-        print(env.attr['json_file'])
 
         with open(env.attr['json_file'], 'r') as json_file:
 
@@ -229,11 +227,10 @@ def read_json_file():
             elif env.attr['os'] == 'Windows':
                 os.system('cls')
 
-            buses_id = [
-                i for i in range(0,12)
-            ]
 
-            for index in buses_id:
+            services = len(data['services'])
+
+            for index in range(services):
                 yield BusStation(index)
 
 
