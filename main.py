@@ -1,7 +1,9 @@
 import os
 import platform
 
-
+###############
+#  Execution  #
+###############
 
 class ExecutionEnvironment:
 
@@ -22,7 +24,12 @@ class ExecutionEnvironment:
 env = ExecutionEnvironment()
 
 
+###############
+#    Setup    #
+###############
+
 try:
+
     import requests
 
 except ImportError as exc:
@@ -39,7 +46,8 @@ except ImportError as exc:
             '''python -m pip install requests'''
         )
 
-finally:    
+finally:
+
     import requests
 
 import json
@@ -47,7 +55,6 @@ import json
 
 
 if env.attr['os'] == 'Windows':
-    
     env.set_attr(
         json_directory = os.getcwd() + '\\' + 'json'
     )
@@ -64,9 +71,9 @@ if not os.path.exists(env.attr['json_directory']):
 
 
 
-
-
-
+###############
+#   Classes   #
+###############
 
 class Bus:
     
@@ -79,11 +86,14 @@ class Bus:
 
 
     def __str__(self) -> str:
-        class_data =\
-            '\n\t\tid : {}\n\t\tmeters_distance : {}m.\n\t\tmin_arrival_time : {} minutos.\n\t\tmax_arrival_time : {} minutos.\n\t\t'.format(
-                self.id, self.meters_distance,
-                self.min_arrival_time, self.max_arrival_time
-            )
+
+        class_data = str(
+            '\n'
+            f'\t\tid                    {self.id}' + '\n'
+            f'\t\tmeters_distance       {self.meters_distance} metros' + '\n'
+            f'\t\tmin_arrival_time      {self.min_arrival_time} minutos.' + '\n'
+            f'\t\tmax_arrival_time      {self.max_arrival_time} minutos.' + '\n'
+        )
 
         return class_data
             
@@ -108,12 +118,15 @@ class AvailableService:
 
         if self._range == 0:
             self._range = 'No disponible'
-                
-        class_data =\
-            '\n\tid : {}\n\tvalid : {}\n\tstatus_description : {}\n\tavailable_buses : {}\n\tbuses : {}\n\t'.format(
-                self.id, self.valid, self.status_description,
-                self._range, self.check_available_buses()
-            )
+        
+        class_data = str(
+            '\n'
+            f'\tid                    {self.id}' + '\n'
+            f'\tvalid                 {self.valid}' + '\n'
+            f'\tstatus_description    {self.status_description}' + '\n'
+            f'\tavailable_buses       {self._range}' + '\n'
+            f'\tbuses                 {self.check_available_buses()}' + '\n'
+        )
 
         return class_data
             
@@ -154,18 +167,19 @@ class BusStation:
         self.status_code         = data['status_code']
         self.status_description  = data['status_description']
         
-        self.services           = data['services'][index]
+        self.services            = data['services'][index]
 
 
     def __str__(self) -> str:
-        class_data =\
-            'id : {}\nname : {}\nstatus_code : {}\nstatus_description : {}\nservices : {}\n'.format(
-                self.id, self.name,
-                self.status_code, self.status_description,
-                self.service()
-            )
 
-        
+        class_data = str(
+            f'id                    {self.id}' + '\n'
+            f'name                  {self.name}' + '\n'
+            f'status_code           {self.status_code}' + '\n'
+            f'status_description    {self.status_description}' + '\n'
+            f'services              {self.service()}' + '\n'
+        )
+
         return class_data
 
             
@@ -175,7 +189,9 @@ class BusStation:
             for services in self.services[available_services]:
                 return Service(self.services).AvailableService.__str__()
 
-
+###############
+#    Write    #
+###############
 def write_json_file(id : str):
 
     api_url = 'https://api.xor.cl/red/bus-stop/' + id
@@ -204,12 +220,15 @@ def write_json_file(id : str):
     
     
     with open(env.attr['json_file'], 'w') as json_file:
-        
+
         json_file.write(data)
 
     json_file.close()
 
 
+###############
+#    Read     #
+###############
 def read_json_file():
     
     if os.path.exists(env.attr['json_file']):
@@ -221,11 +240,7 @@ def read_json_file():
             global data
             data = json.loads(content)
 
-            if env.attr['os'] == 'Linux':
-                os.system('clear')
-            
-            elif env.attr['os'] == 'Windows':
-                os.system('cls')
+            os.system('cls' if os.name == 'nt' else 'clear')
 
 
             services = len(data['services'])
@@ -234,6 +249,9 @@ def read_json_file():
                 yield BusStation(index)
 
 
+###############
+#    main     #
+###############
 def main():
 
     id = input('ID del paradero (ejemplo: PI540)\t')
