@@ -57,7 +57,9 @@ if not os.path.exists(env.attr['json_directory']):
 
 
 
-
+###############
+#    Write    #
+###############
 def write_json_file(id : str):
 
     api_url = 'https://api.xor.cl/red/bus-stop/' + id
